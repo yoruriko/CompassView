@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CompassView">
+        <attr name="showRing" format="boolean" />
+        <attr name="ringColor" format="color" />
+        <attr name="circleColor" format="color" />
+        <attr name="pointerDrawable" format="reference"/>
+        <attr name="pointerRotation" format="integer"/>
+    </declare-styleable>
+</resources>
