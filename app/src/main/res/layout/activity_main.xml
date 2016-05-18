@@ -17,6 +17,7 @@
         android:layout_height="100dp"
         app:circleColor="@color/dark"
         app:ringColor="@color/red"
+        app:pointerRotation="0"
         app:pointerDrawable="@drawable/pointer"
         app:showRing="true" />
 

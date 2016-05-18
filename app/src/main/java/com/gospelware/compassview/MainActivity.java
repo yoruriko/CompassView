@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         compassView = (CompassView) findViewById(R.id.compass);
         compassView.startScan();
 
+
         Button btn = (Button) findViewById(R.id.btn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
