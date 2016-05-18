@@ -196,7 +196,7 @@ public class CompassView extends View {
             drawPointer(canvas);
         }
 
-        
+
         super.onDraw(canvas);
     }
 
