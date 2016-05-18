@@ -120,6 +120,10 @@ public class CompassView extends View {
         invalidate();
     }
 
+    public boolean isScanning(){
+        return scanAnimator!=null&&scanAnimator.isRunning();
+    }
+
     public void startScan() {
         if (scanAnimator != null && !scanAnimator.isRunning()) {
             scanAnimator.start();
@@ -127,7 +131,7 @@ public class CompassView extends View {
     }
 
     public void stopScan() {
-        if (scanAnimator != null && scanAnimator.isRunning()) {
+        if (isScanning()) {
             scanAnimator.end();
         }
     }

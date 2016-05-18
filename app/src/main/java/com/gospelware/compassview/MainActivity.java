@@ -10,7 +10,6 @@ import com.gospelware.compassviewlib.CompassView;
 public class MainActivity extends AppCompatActivity {
 
     private CompassView compassView;
-    private boolean isStop;
     private int angle;
 
     @Override
@@ -24,13 +23,12 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isStop) {
+                if (compassView.isScanning()) {
                     compassView.stopScan();
                 } else {
                     compassView.startScan();
                 }
 
-                isStop=!isStop;
             }
         });
 
