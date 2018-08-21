@@ -1,15 +1,18 @@
 package com.gospelware.compassview;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.gospelware.compassviewlib.CompassView;
+import com.gospelware.compassviewlib.OnRotationChangeListener;
 
 public class MainActivity extends AppCompatActivity {
 
     private CompassView compassView;
+    private TextView txtRotation;
     private int angle;
 
     @Override
@@ -17,8 +20,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         compassView = (CompassView) findViewById(R.id.compass);
-        compassView.startScan();
+//        compassView.startScan();
+        compassView.setRotationChangedListener(rotationChangeListener);
 
+        txtRotation = (TextView)findViewById(R.id.txtRotation);
 
         Button btn = (Button) findViewById(R.id.btn);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -42,4 +47,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private OnRotationChangeListener rotationChangeListener = new OnRotationChangeListener() {
+        @Override
+        public void rotationChanged(float oldRotation, float newRotation) {
+            txtRotation.setText(Math.round(newRotation) + "°");
+        }
+    };
 }

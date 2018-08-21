@@ -6,5 +6,6 @@
         <attr name="circleColor" format="color" />
         <attr name="pointerDrawable" format="reference"/>
         <attr name="pointerRotation" format="integer"/>
+        <attr name="compassSnapInterval" format="integer"/>
     </declare-styleable>
 </resources>
