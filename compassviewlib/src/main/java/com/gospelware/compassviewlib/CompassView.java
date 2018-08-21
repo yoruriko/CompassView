@@ -199,7 +199,12 @@ public class CompassView extends View {
     }
 
     public void setRotation(int rotation) {
+        float oldRotation = getRotation();
+
         this.rotation = rotation;
+
+        if (this.rotationChanged != null) this.rotationChanged.rotationChanged(oldRotation, rotation);
+
         invalidate();
         requestLayout();
     }
@@ -266,8 +271,6 @@ public class CompassView extends View {
     /** Detect when view is touched; reposition pointer to corresponding rotation */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float oldRotation = getRotation();
-
         if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
             float touchX = event.getRawX(), touchY = event.getRawY();
             float adjacent = touchY - centerRawY, opposite = touchX - centerRawX;
@@ -278,8 +281,6 @@ public class CompassView extends View {
             if (rotation == 360) rotation = 0; // No need to have two values for due north
             Log.d(TAG, "touch x: " + event.getRawX() + ", touch y: " + event.getRawY() + ", center x: " + centerRawX + ", center y: " + centerRawY + ", rotation: " + rotation);
             setRotation(rotation);
-
-            if (this.rotationChanged != null) this.rotationChanged.rotationChanged(oldRotation, rotation);
         }
         return true;
     }
