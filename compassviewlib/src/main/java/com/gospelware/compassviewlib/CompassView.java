@@ -14,6 +14,8 @@ import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.SweepGradient;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
@@ -21,6 +23,7 @@ import android.view.animation.LinearInterpolator;
  * Created by ricogao on 17/05/2016.
  */
 public class CompassView extends View {
+    private static final String TAG = "CompassView";
 
     private float centerX, centerY;
     private Paint circlePaint, pointerPaint, ringPaint, shaderPaint;
@@ -35,12 +38,16 @@ public class CompassView extends View {
     private float offset;
     private boolean showRing;
 
+    private int compassSnapInterval;
+
     private Bitmap pointerBitmap;
 
     private int rotation;
 
     private Animator scanAnimator;
     private int scan;
+
+    private OnRotationChangeListener rotationChanged;
 
 
     public CompassView(Context context) {
@@ -67,6 +74,9 @@ public class CompassView extends View {
             rotation = a.getInt(R.styleable.CompassView_pointerRotation, 0);
             int bitmapId = a.getResourceId(R.styleable.CompassView_pointerDrawable, 0);
             pointerBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
+            compassSnapInterval = a.getInt(R.styleable.CompassView_compassSnapInterval, 5);
+            // Have to do some special validation here...
+            if (compassSnapInterval < 0 || compassSnapInterval > 180) compassSnapInterval = 5;
         } finally {
             a.recycle();
         }
@@ -75,12 +85,21 @@ public class CompassView extends View {
 
     }
 
+    private float centerRawX, centerRawY;
+    private void getRawCenterLocation(float centerX, float centerY) {
+        int rawLoc[] = new int[2];
+        getLocationOnScreen(rawLoc);
+        centerRawX = rawLoc[0] + centerX;
+        centerRawY = rawLoc[1] + centerY;
+    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         centerX = getWidth() / 2;
         centerY = getHeight() / 2;
         circleRadius = centerX;
+
+        getRawCenterLocation(centerX, centerY);
 
         super.onSizeChanged(w, h, oldw, oldh);
     }
@@ -99,10 +118,8 @@ public class CompassView extends View {
         pointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         pointerPaint.setColor(ringColor);
 
-
         shaderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         shaderPaint.setColor(ringColor);
-
 
         initScanAnimator();
     }
@@ -136,6 +153,9 @@ public class CompassView extends View {
         }
     }
 
+    public void setRotationChangedListener(OnRotationChangeListener rotationChanged) {
+        this.rotationChanged = rotationChanged;
+    }
 
     public void setRingColor(int color) {
         this.ringColor = color;
@@ -179,7 +199,12 @@ public class CompassView extends View {
     }
 
     public void setRotation(int rotation) {
+        float oldRotation = getRotation();
+
         this.rotation = rotation;
+
+        if (this.rotationChanged != null) this.rotationChanged.rotationChanged(oldRotation, rotation);
+
         invalidate();
         requestLayout();
     }
@@ -243,5 +268,21 @@ public class CompassView extends View {
         canvas.restore();
     }
 
+    /** Detect when view is touched; reposition pointer to corresponding rotation */
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
+            float touchX = event.getRawX(), touchY = event.getRawY();
+            float adjacent = touchY - centerRawY, opposite = touchX - centerRawX;
+            double thetaRad = Math.atan2(adjacent, opposite);
+            double thetaDeg = Math.toDegrees(thetaRad);
+            float rotationCorr = (float) (thetaDeg + 360 + 90) % 360;
+            int rotation = compassSnapInterval * (Math.round(rotationCorr/compassSnapInterval));
+            if (rotation == 360) rotation = 0; // No need to have two values for due north
+            Log.d(TAG, "touch x: " + event.getRawX() + ", touch y: " + event.getRawY() + ", center x: " + centerRawX + ", center y: " + centerRawY + ", rotation: " + rotation);
+            setRotation(rotation);
+        }
+        return true;
+    }
 
 }

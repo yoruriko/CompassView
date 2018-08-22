@@ -19,7 +19,17 @@
         app:ringColor="@color/red"
         app:pointerRotation="0"
         app:pointerDrawable="@drawable/pointer"
-        app:showRing="true" />
+        app:showRing="true"
+        app:compassSnapInterval="10"/>
+    <TextView android:id="@+id/txtRotation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/compass"
+        android:layout_alignBottom="@id/compass"
+        android:layout_alignStart="@id/compass"
+        android:layout_alignEnd="@id/compass"
+        android:textColor="@android:color/white"
+        android:gravity="center_vertical|center_horizontal"/>
 
     <Button
         android:id="@+id/btn"
