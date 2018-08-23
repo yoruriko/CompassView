@@ -39,6 +39,7 @@ public class CompassView extends View {
     private boolean showRing;
 
     private int compassSnapInterval;
+    private boolean alwaysShowNorth;
 
     private Bitmap pointerBitmap;
 
@@ -72,6 +73,7 @@ public class CompassView extends View {
             ringColor = a.getColor(R.styleable.CompassView_ringColor, Color.WHITE);
             showRing = a.getBoolean(R.styleable.CompassView_showRing, true);
             rotation = a.getInt(R.styleable.CompassView_pointerRotation, 0);
+            alwaysShowNorth = a.getBoolean(R.styleable.CompassView_alwaysShowNorth, false);
             int bitmapId = a.getResourceId(R.styleable.CompassView_pointerDrawable, 0);
             pointerBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
             compassSnapInterval = a.getInt(R.styleable.CompassView_compassSnapInterval, 5);
@@ -221,8 +223,14 @@ public class CompassView extends View {
 
         if (scanAnimator != null && scanAnimator.isRunning()) {
             drawScan(canvas);
+          if (alwaysShowNorth) {
+            drawNorthIndicator(canvas);
+          }
         } else {
-            drawPointer(canvas);
+          if (alwaysShowNorth) {
+            drawNorthIndicator(canvas);
+          }
+          drawPointer(canvas);
         }
 
 
@@ -248,6 +256,10 @@ public class CompassView extends View {
         canvas.rotate(scan, centerX, centerY);
         canvas.drawCircle(centerX, centerY, circleRadius, shaderPaint);
         canvas.restore();
+    }
+
+    private void drawNorthIndicator(Canvas canvas) {
+      canvas.drawCircle(centerX, 3 * offset, offset, pointerPaint);
     }
 
     private void drawPointer(Canvas canvas) {
