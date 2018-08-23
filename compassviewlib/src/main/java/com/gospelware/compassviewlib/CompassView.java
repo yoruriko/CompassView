@@ -199,7 +199,7 @@ public class CompassView extends View {
     }
 
     public void setRotation(int rotation) {
-        float oldRotation = getRotation();
+        int oldRotation = Math.round(getRotation());
 
         this.rotation = rotation;
 
