@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
     private OnRotationChangeListener rotationChangeListener = new OnRotationChangeListener() {
         @Override
-        public void rotationChanged(float oldRotation, float newRotation) {
-            txtRotation.setText(Math.round(newRotation) + "°");
+        public void rotationChanged(int oldRotation, int newRotation) {
+            txtRotation.setText(newRotation + "°");
         }
     };
 }

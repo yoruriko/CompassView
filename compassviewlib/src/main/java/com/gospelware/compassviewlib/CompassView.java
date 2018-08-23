@@ -168,14 +168,14 @@ public class CompassView extends View {
         shaderPaint.setShader(shader);
 
         invalidate();
-        requestLayout();
+//        requestLayout();
     }
 
     public void setCircleColor(int color) {
         this.circleColor = color;
         circlePaint.setColor(color);
         invalidate();
-        requestLayout();
+//        requestLayout();
     }
 
 
@@ -186,7 +186,7 @@ public class CompassView extends View {
     public void setShowRing(boolean showRing) {
         this.showRing = showRing;
         invalidate();
-        requestLayout();
+//        requestLayout();
     }
 
     public void setPointerDrawable(int id) {
@@ -194,7 +194,7 @@ public class CompassView extends View {
         if (bitmap != null) {
             this.pointerBitmap = bitmap;
             invalidate();
-            requestLayout();
+//            requestLayout();
         }
     }
 
@@ -206,7 +206,7 @@ public class CompassView extends View {
         if (this.rotationChanged != null) this.rotationChanged.rotationChanged(oldRotation, rotation);
 
         invalidate();
-        requestLayout();
+//        requestLayout();
     }
 
 
@@ -258,7 +258,8 @@ public class CompassView extends View {
         if (pointerBitmap != null) {
             float scale = 4 * offset / pointerBitmap.getHeight();
             Matrix matrix = new Matrix();
-            matrix.preTranslate(centerX - (pointerBitmap.getWidth() / 2), 2 * offset);
+            // Account for how the image will be scaled, when deciding where to place it
+            matrix.preTranslate(centerX - ((scale * pointerBitmap.getWidth()) / 2), 2 * offset);
             matrix.preScale(scale, scale);
             canvas.drawBitmap(pointerBitmap, matrix, pointerPaint);
         } else {
