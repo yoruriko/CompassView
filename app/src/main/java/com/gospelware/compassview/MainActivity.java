@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 angle+=5;
-                compassView.setRotation(angle);
+                compassView.setCompassRotation(angle);
             }
         });
     }

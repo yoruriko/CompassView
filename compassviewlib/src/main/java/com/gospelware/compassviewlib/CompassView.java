@@ -177,7 +177,7 @@ public class CompassView extends View {
         this.circleColor = color;
         circlePaint.setColor(color);
         invalidate();
-//        requestLayout();
+
     }
 
 
@@ -188,7 +188,6 @@ public class CompassView extends View {
     public void setShowRing(boolean showRing) {
         this.showRing = showRing;
         invalidate();
-//        requestLayout();
     }
 
     public void setPointerDrawable(int id) {
@@ -196,11 +195,10 @@ public class CompassView extends View {
         if (bitmap != null) {
             this.pointerBitmap = bitmap;
             invalidate();
-//            requestLayout();
         }
     }
 
-    public void setRotation(int rotation) {
+    public void setCompassRotation(int rotation) {
         int oldRotation = Math.round(getRotation());
 
         this.rotation = rotation;
@@ -208,9 +206,11 @@ public class CompassView extends View {
         if (this.rotationChanged != null) this.rotationChanged.rotationChanged(oldRotation, rotation);
 
         invalidate();
-//        requestLayout();
     }
 
+    public int getCompassRotation() {
+        return this.rotation;
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -293,7 +293,7 @@ public class CompassView extends View {
             int rotation = compassSnapInterval * (Math.round(rotationCorr/compassSnapInterval));
             if (rotation == 360) rotation = 0; // No need to have two values for due north
             Log.d(TAG, "touch x: " + event.getRawX() + ", touch y: " + event.getRawY() + ", center x: " + centerRawX + ", center y: " + centerRawY + ", rotation: " + rotation);
-            setRotation(rotation);
+            setCompassRotation(rotation);
         }
         return true;
     }
