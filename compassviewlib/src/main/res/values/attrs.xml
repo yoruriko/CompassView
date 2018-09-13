@@ -7,5 +7,6 @@
         <attr name="pointerDrawable" format="reference"/>
         <attr name="pointerRotation" format="integer"/>
         <attr name="compassSnapInterval" format="integer"/>
+        <attr name="alwaysShowNorth" format="boolean"/>
     </declare-styleable>
 </resources>

@@ -39,6 +39,7 @@ public class CompassView extends View {
     private boolean showRing;
 
     private int compassSnapInterval;
+    private boolean alwaysShowNorth;
 
     private Bitmap pointerBitmap;
 
@@ -72,6 +73,7 @@ public class CompassView extends View {
             ringColor = a.getColor(R.styleable.CompassView_ringColor, Color.WHITE);
             showRing = a.getBoolean(R.styleable.CompassView_showRing, true);
             rotation = a.getInt(R.styleable.CompassView_pointerRotation, 0);
+            alwaysShowNorth = a.getBoolean(R.styleable.CompassView_alwaysShowNorth, false);
             int bitmapId = a.getResourceId(R.styleable.CompassView_pointerDrawable, 0);
             pointerBitmap = BitmapFactory.decodeResource(getContext().getResources(), bitmapId);
             compassSnapInterval = a.getInt(R.styleable.CompassView_compassSnapInterval, 5);
@@ -168,14 +170,14 @@ public class CompassView extends View {
         shaderPaint.setShader(shader);
 
         invalidate();
-        requestLayout();
+//        requestLayout();
     }
 
     public void setCircleColor(int color) {
         this.circleColor = color;
         circlePaint.setColor(color);
         invalidate();
-        requestLayout();
+
     }
 
 
@@ -186,7 +188,6 @@ public class CompassView extends View {
     public void setShowRing(boolean showRing) {
         this.showRing = showRing;
         invalidate();
-        requestLayout();
     }
 
     public void setPointerDrawable(int id) {
@@ -194,21 +195,22 @@ public class CompassView extends View {
         if (bitmap != null) {
             this.pointerBitmap = bitmap;
             invalidate();
-            requestLayout();
         }
     }
 
-    public void setRotation(int rotation) {
-        float oldRotation = getRotation();
+    public void setCompassRotation(int rotation) {
+        int oldRotation = Math.round(getRotation());
 
         this.rotation = rotation;
 
         if (this.rotationChanged != null) this.rotationChanged.rotationChanged(oldRotation, rotation);
 
         invalidate();
-        requestLayout();
     }
 
+    public int getCompassRotation() {
+        return this.rotation;
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -221,8 +223,14 @@ public class CompassView extends View {
 
         if (scanAnimator != null && scanAnimator.isRunning()) {
             drawScan(canvas);
+          if (alwaysShowNorth) {
+            drawNorthIndicator(canvas);
+          }
         } else {
-            drawPointer(canvas);
+          if (alwaysShowNorth) {
+            drawNorthIndicator(canvas);
+          }
+          drawPointer(canvas);
         }
 
 
@@ -250,6 +258,10 @@ public class CompassView extends View {
         canvas.restore();
     }
 
+    private void drawNorthIndicator(Canvas canvas) {
+      canvas.drawCircle(centerX, 3 * offset, offset, pointerPaint);
+    }
+
     private void drawPointer(Canvas canvas) {
 
         canvas.save();
@@ -258,7 +270,8 @@ public class CompassView extends View {
         if (pointerBitmap != null) {
             float scale = 4 * offset / pointerBitmap.getHeight();
             Matrix matrix = new Matrix();
-            matrix.preTranslate(centerX - (pointerBitmap.getWidth() / 2), 2 * offset);
+            // Account for how the image will be scaled, when deciding where to place it
+            matrix.preTranslate(centerX - ((scale * pointerBitmap.getWidth()) / 2), 2 * offset);
             matrix.preScale(scale, scale);
             canvas.drawBitmap(pointerBitmap, matrix, pointerPaint);
         } else {
@@ -280,7 +293,7 @@ public class CompassView extends View {
             int rotation = compassSnapInterval * (Math.round(rotationCorr/compassSnapInterval));
             if (rotation == 360) rotation = 0; // No need to have two values for due north
             Log.d(TAG, "touch x: " + event.getRawX() + ", touch y: " + event.getRawY() + ", center x: " + centerRawX + ", center y: " + centerRawY + ", rotation: " + rotation);
-            setRotation(rotation);
+            setCompassRotation(rotation);
         }
         return true;
     }

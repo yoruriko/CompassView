@@ -43,15 +43,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 angle+=5;
-                compassView.setRotation(angle);
+                compassView.setCompassRotation(angle);
             }
         });
     }
 
     private OnRotationChangeListener rotationChangeListener = new OnRotationChangeListener() {
         @Override
-        public void rotationChanged(float oldRotation, float newRotation) {
-            txtRotation.setText(Math.round(newRotation) + "°");
+        public void rotationChanged(int oldRotation, int newRotation) {
+            txtRotation.setText(newRotation + "°");
         }
     };
 }
